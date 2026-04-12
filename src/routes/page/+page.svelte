@@ -24,7 +24,7 @@
 
 	onMount(() => {
 		const urlParams = new URLSearchParams(window.location.search);
-		const pageId = urlParams.get('id');
+		const pageId = urlParams.get('id')?.toLowerCase();
 
 		pageState.load(pageId || '');
 	});
@@ -141,14 +141,8 @@
 					and events.
 				</p>
 				<p>
-					If multiple enemies share the same prices or multiple events share the same prices, one
-					will be chosen at random from that group.
+					If multiple enemies or events share the same prices, one will be chosen at random from that group.
 				</p>
-				<p>
-					Enemy prices can't match event prices. While duplicate prices are allowed within enemies
-					or within events, no enemy can have the same price as any event.
-				</p>
-				<p>RANDOM ENEMY and RANDOM EVENT must have unique prices.</p>
 				<p>
 					Please notify the streamer if you notice anything wrong based on the information above.
 				</p>
