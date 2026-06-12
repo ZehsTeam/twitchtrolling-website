@@ -1,42 +1,72 @@
 <script lang="ts">
-	import type { PageState } from '$lib/PageState.svelte';
-	import twitchImage from '$lib/media/twitch-64x64.png';
-	import Partner from '$lib/components/Partner.svelte';
+	import { onDestroy } from 'svelte';
+	import type { Page } from '$lib/types';
+	import { formatDistanceToNow } from 'date-fns';
+	import twitchImage from '$lib/assets/twitch-64x64.png';
+	import Partner from '$lib/components/icons/Partner.svelte';
+	import { formatFollowers } from '$lib/utils';
 
 	let {
-		pageState
+		page
 	}: {
-		pageState: PageState;
+		page: Page;
 	} = $props();
+
+	let followersFormatted = $derived(formatFollowers(page.followerCount));
+
+	let now = $state(Date.now());
+	const interval = setInterval(() => (now = Date.now()), 60_000);
+	onDestroy(() => clearInterval(interval));
+
+	let createdAgo = $derived.by(() => {
+		if (!now || !page._creationTime) return 'never';
+
+		const diff = now - page._creationTime;
+		if (diff < 60_000) return 'just now';
+
+		return formatDistanceToNow(page._creationTime, { addSuffix: true });
+	});
+
+	let updatedAgo = $derived.by(() => {
+		if (!now || !page.updatedByOwnerAt) return 'never';
+
+		const diff = now - page.updatedByOwnerAt;
+		if (diff < 60_000) return 'just now';
+
+		return formatDistanceToNow(page.updatedByOwnerAt, { addSuffix: true });
+	});
+
+	let expiresIn = $derived(
+		now && page.expiresAt ? formatDistanceToNow(page.expiresAt, { addSuffix: true }) : 'never'
+	);
 </script>
 
 <div class="page-info">
 	<div class="channel-container">
-		{#if pageState.logo}
-			<img src={pageState.logo} alt="Logo" class="full-circle" />
+		{#if page.imageUrl}
+			<img src={page.imageUrl} alt="Logo" class="full-circle" />
 		{:else}
 			<img src={twitchImage} alt="Logo" />
 		{/if}
 		<h1>
-			<a href="https://www.twitch.tv/{pageState.channel}" target="_blank">
-				{pageState.displayName}
+			<a href="https://www.twitch.tv/{page.username}" target="_blank">
+				{page.displayName}
 			</a>
 		</h1>
-		{#if pageState.isPartner}
+		{#if page.isPartner}
 			<div class="partner-container">
 				<Partner margin="0 0 0 4px" />
 			</div>
 		{/if}
 	</div>
-	<div class="times-container">
+	<div class="other-info-container">
 		<p>
-			{pageState.liveViewers} Live Viewer{pageState.liveViewers === 1 ? '' : 's'}
-			<span class="small-text">(Page)</span>
+			{followersFormatted}
+			Followers
 		</p>
-		<p>{pageState.uniqueViews} View{pageState.uniqueViews === 1 ? '' : 's'}</p>
-		<p>Created {pageState.createdAgo}</p>
-		<p>Updated {pageState.updatedAgo}</p>
-		<p>Expires {pageState.expiresInCountdown}</p>
+		<p>Created {createdAgo}</p>
+		<p>Updated {updatedAgo}</p>
+		<p>Expires {expiresIn}</p>
 	</div>
 </div>
 
@@ -60,12 +90,12 @@
 		margin-right: 0.5em;
 	}
 
-	.times-container {
+	.other-info-container {
 		display: flex;
 		gap: 0.75em;
 	}
 
-	.times-container p:not(:last-child)::after {
+	.other-info-container p:not(:last-child)::after {
 		content: '/';
 		margin-left: 0.75em;
 		color: var(--text-muted);
@@ -87,10 +117,6 @@
 		border-radius: 50%;
 	}
 
-	.small-text {
-		font-size: 0.8em;
-	}
-
 	.partner-container {
 		display: flex;
 		align-items: end;
@@ -106,11 +132,11 @@
 	}
 
 	@media only screen and (max-width: 750px) {
-		.times-container {
+		.other-info-container {
 			flex-direction: column;
 		}
 
-		.times-container p:not(:last-child)::after {
+		.other-info-container p:not(:last-child)::after {
 			display: none;
 		}
 	}

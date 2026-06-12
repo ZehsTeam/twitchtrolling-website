@@ -1,0 +1,16 @@
+{
+	/* Convex bundles this folder separately from SvelteKit; keep settings local. */
+	"compilerOptions": {
+		"target": "ESNext",
+		"lib": ["ES2021", "dom"],
+		"allowJs": true,
+		"strict": true,
+		"moduleResolution": "Bundler",
+		"skipLibCheck": true,
+		"noEmit": true,
+		"verbatimModuleSyntax": true,
+		"types": ["node"]
+	},
+	"include": ["./**/*"],
+	"exclude": ["./_generated"]
+}

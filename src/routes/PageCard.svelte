@@ -1,29 +1,57 @@
 <script lang="ts">
-	import { base } from '$app/paths';
-	import type { PageDataCompact } from '$lib/types';
-	import twitchImage from '$lib/media/twitch-64x64.png';
-	import { timeAgo, formatDuration, getRemaining, formatNumber } from '$lib/utils';
-	import Partner from '$lib/components/Partner.svelte';
+	import { resolve } from '$app/paths';
+	import { onDestroy } from 'svelte';
+	import { formatDistanceToNow } from 'date-fns';
+	import { formatFollowers } from '$lib/utils';
+	import type { Page } from '$lib/types';
+	import twitchImage from '$lib/assets/twitch-64x64.png';
+	import Partner from '$lib/components/icons/Partner.svelte';
+	import Fa from 'svelte-fa';
+	import { faTriangleExclamation } from '@fortawesome/free-solid-svg-icons';
+	import { scale } from 'svelte/transition';
 
 	let {
 		page
 	}: {
-		page: PageDataCompact;
+		page: Page;
 	} = $props();
 
-	let createdAgo = $derived(page.createdAt ? timeAgo(page.createdAt) : 'never');
-	let updatedAgo = $derived(page.updatedByOwnerAt ? timeAgo(page.updatedByOwnerAt) : 'never');
+	const resolved = resolve('/page');
+
+	let followersFormatted = $derived(formatFollowers(page.followerCount));
+
+	let now = $state(Date.now());
+	const interval = setInterval(() => (now = Date.now()), 60_000);
+	onDestroy(() => clearInterval(interval));
+
+	let createdAgo = $derived.by(() => {
+		if (!now || !page._creationTime) return 'never';
+
+		const diff = now - page._creationTime;
+		if (diff < 60_000) return 'just now';
+
+		return formatDistanceToNow(page._creationTime, { addSuffix: true });
+	});
+
+	let updatedAgo = $derived.by(() => {
+		if (!now || !page.updatedByOwnerAt) return 'never';
+
+		const diff = now - page.updatedByOwnerAt;
+		if (diff < 60_000) return 'just now';
+
+		return formatDistanceToNow(page.updatedByOwnerAt, { addSuffix: true });
+	});
+
 	let expiresIn = $derived(
-		page.expiresAt ? `in ${formatDuration(getRemaining(page.expiresAt))}` : 'never'
+		now && page.expiresAt ? formatDistanceToNow(page.expiresAt, { addSuffix: true }) : 'never'
 	);
-	let followersFormatted = $derived(formatNumber(page.followers || 0));
 </script>
 
-<a href="{base}/page?id={page.id}">
+<a href="{resolved}?id={page.urlId}" transition:scale>
 	<div class="page-card">
 		<div class="top">
-			{#if page.logo}
-				<img src={page.logo} alt="Logo" class="full-circle" />
+			{#if page.imageUrl}
+				<img src={page.imageUrl} alt="Logo" class="full-circle" />
 			{:else}
 				<img src={twitchImage} alt="Logo" />
 			{/if}
@@ -40,24 +68,24 @@
 				{followersFormatted}
 				Followers
 			</p>
-			{#if page.liveViewers !== undefined}
-				<p>
-					{page.liveViewers} Live Viewer{page.liveViewers === 1 ? '' : 's'}
-					<span class="small-text">(Page)</span>
-				</p>
-			{/if}
-			{#if page.uniqueViews !== undefined}
-				<p>{page.uniqueViews} View{page.uniqueViews === 1 ? '' : 's'}</p>
-			{/if}
 			<p>Created {createdAgo}</p>
 			<p>Updated {updatedAgo}</p>
 			<p>Expires {expiresIn}</p>
 		</div>
+
+		{#if !page.isHost}
+			<div class="not-host-container">
+				<div class="not-host-icon-container" title="Page creator is not the host">
+					<Fa size="lg" icon={faTriangleExclamation} color="red" />
+				</div>
+			</div>
+		{/if}
 	</div>
 </a>
 
 <style>
 	.page-card {
+		position: relative;
 		height: 100%;
 		padding: 0.5em;
 		display: flex;
@@ -65,6 +93,21 @@
 		background: var(--bg-light);
 		border: 1px solid var(--border);
 		border-radius: var(--border-radius-card);
+	}
+
+	.not-host-container {
+		position: absolute;
+		inset: 0;
+		padding: 0.5em;
+		display: flex;
+		justify-content: right;
+		pointer-events: none;
+	}
+
+	.not-host-icon-container {
+		display: flex;
+		height: fit-content;
+		pointer-events: all;
 	}
 
 	img {
@@ -92,10 +135,6 @@
 
 	.full-circle {
 		border-radius: 50%;
-	}
-
-	.small-text {
-		font-size: 0.8em;
 	}
 
 	.partner-container {

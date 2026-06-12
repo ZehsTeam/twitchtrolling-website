@@ -4,3 +4,16 @@ pnpm-lock.yaml
 yarn.lock
 bun.lock
 bun.lockb
+
+# Miscellaneous
+/static/
+
+# Convex
+/src/convex/_generated
+
+# AI files
+AGENTS.md
+CLAUDE.md
+skills-lock.json
+.agents/*
+.claude/*

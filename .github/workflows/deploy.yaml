@@ -26,6 +26,11 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Create .env.production
+        run: |
+          echo "PUBLIC_CONVEX_URL=${{ secrets.PUBLIC_CONVEX_URL }}" >> .env.production
+          echo "PUBLIC_CONVEX_SITE_URL=${{ secrets.PUBLIC_CONVEX_SITE_URL }}" >> .env.production
+
       - name: build
         env:
           BASE_PATH: '/${{ github.event.repository.name }}'

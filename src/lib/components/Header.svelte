@@ -1,16 +1,18 @@
 <script lang="ts">
-	import { base } from '$app/paths';
+	import { resolve } from '$app/paths';
 	import Fa from 'svelte-fa';
 	import { faHeart } from '@fortawesome/free-solid-svg-icons';
 
 	function openSupportPage() {
 		window.open('https://ko-fi.com/zehsteam', '_blank');
 	}
+
+	const resolved = resolve('/');
 </script>
 
 <div class="header">
 	<div class="left">
-		<h1><a href="{base}/">TwitchTrolling</a></h1>
+		<h1><a href={resolved}>TwitchTrolling</a></h1>
 		<p>
 			by <a href="https://solo.to/crithaxxog" target="_blank">CritHaxXoG</a> for
 			<a href="https://www.twitch.tv/psychohypnotic" target="_blank">PsychoHypnotic</a>
