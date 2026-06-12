@@ -1,13 +1,13 @@
 <script lang="ts">
-	import type { PageDataCompact } from '$lib/types';
 	import PageCard from './PageCard.svelte';
 	import Select from '$lib/components/ui/Select.svelte';
 
-	let {
-		pages
-	}: {
-		pages: PageDataCompact[];
-	} = $props();
+	import { useQuery } from 'convex-svelte';
+	import { api } from '$convex/_generated/api.js';
+
+	const pages = useQuery(api.pages.getPages, {});
+
+	let pagesData = $derived(pages.data || []);
 
 	let search = $state('');
 
@@ -17,8 +17,6 @@
 		| 'created: oldest to newest'
 		| 'updated: newest to oldest'
 		| 'updated: oldest to newest'
-		| 'live viewers: highest to lowest'
-		| 'live viewers: lowest to highest'
 		| 'expires: latest to soonest'
 		| 'expires: soonest to latest';
 
@@ -28,8 +26,6 @@
 		'created: oldest to newest': 'Created: Oldest to Newest',
 		'updated: newest to oldest': 'Updated: Newest to Oldest',
 		'updated: oldest to newest': 'Updated: Oldest to Newest',
-		'live viewers: highest to lowest': 'Live Viewers: Highest to Lowest',
-		'live viewers: lowest to highest': 'Live Viewers: Lowest to Highest',
 		'expires: latest to soonest': 'Expires: Latest to Soonest',
 		'expires: soonest to latest': 'Expires: Soonest to Latest'
 	};
@@ -37,24 +33,31 @@
 	let pageSort = $state<PageSort>('created: newest to oldest');
 
 	let filteredPages = $derived.by(() => {
-		let result = pages;
+		let result = pagesData;
 
 		// Apply search filter
 		if (search.trim()) {
 			const searchTerm = search.toLowerCase().trim();
-			result = result.filter((card) => card.channel.toLowerCase().includes(searchTerm));
+
+			result = result.filter((page) => {
+				if (page.username.toLowerCase().includes(searchTerm)) return true;
+
+				if (page.displayName.toLowerCase().includes(searchTerm)) return true;
+
+				return false;
+			});
 		}
 
 		// Apply sorting
 		switch (pageSort) {
 			case 'created: newest to oldest':
 				result = [...result].sort(
-					(a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+					(a, b) => new Date(b._creationTime).getTime() - new Date(a._creationTime).getTime()
 				);
 				break;
 			case 'created: oldest to newest':
 				result = [...result].sort(
-					(a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+					(a, b) => new Date(a._creationTime).getTime() - new Date(b._creationTime).getTime()
 				);
 				break;
 			case 'updated: newest to oldest':
@@ -72,12 +75,6 @@
 					const bTime = b.updatedByOwnerAt ? new Date(b.updatedByOwnerAt).getTime() : 0;
 					return aTime - bTime;
 				});
-				break;
-			case 'live viewers: highest to lowest':
-				result = [...result].sort((a, b) => (b.liveViewers || 0) - (a.liveViewers || 0));
-				break;
-			case 'live viewers: lowest to highest':
-				result = [...result].sort((a, b) => (a.liveViewers || 0) - (b.liveViewers || 0));
 				break;
 			case 'expires: latest to soonest':
 				result = [...result].sort(
@@ -114,11 +111,20 @@
 			</div>
 		</div>
 	</div>
-	<div class="cards">
-		{#each filteredPages as page}
-			<PageCard {page} />
-		{/each}
-	</div>
+
+	{#if pages.isLoading}
+		<p>Loading...</p>
+	{:else if pages.error}
+		<p>Failed to load: {pages.error.toString()}</p>
+	{:else if pages.data.length == 0}
+		<p>No pages found.</p>
+	{:else}
+		<div class="cards">
+			{#each filteredPages as page (page._id)}
+				<PageCard {page} />
+			{/each}
+		</div>
+	{/if}
 </div>
 
 <style>

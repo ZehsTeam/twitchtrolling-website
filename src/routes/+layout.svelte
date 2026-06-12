@@ -1,9 +1,19 @@
 <script lang="ts">
+	import favicon from '$lib/assets/favicon.png';
 	import '../app.css';
 	import Header from '$lib/components/Header.svelte';
 
-	let { children } = $props();
+	import { PUBLIC_CONVEX_URL } from '$env/static/public';
+	import { setupConvex } from 'convex-svelte';
+
+	const { children } = $props();
+
+	setupConvex(PUBLIC_CONVEX_URL);
 </script>
+
+<svelte:head>
+	<link rel="icon" href={favicon} />
+</svelte:head>
 
 <Header />
 

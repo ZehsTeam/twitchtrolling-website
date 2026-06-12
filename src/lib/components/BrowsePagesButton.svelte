@@ -1,9 +1,11 @@
 <script lang="ts">
-	import { base } from '$app/paths';
+	import { resolve } from '$app/paths';
 	import { goto } from '$app/navigation';
+
+	const resolved = resolve('/');
 </script>
 
-<button onclick={() => goto(`${base}/`)}>Browse pages</button>
+<button onclick={() => goto(resolved)}>Browse pages</button>
 
 <style>
 </style>

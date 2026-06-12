@@ -17,7 +17,7 @@
 	onchange={(e) => handleChanged((e.target as HTMLSelectElement).value)}
 	class={propsClass}
 >
-	{#each Object.entries(options) as [optionKey, optionValue]}
+	{#each Object.entries(options) as [optionKey, optionValue] (optionKey)}
 		<option value={optionKey}>{optionValue}</option>
 	{/each}
 </select>
