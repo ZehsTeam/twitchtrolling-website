@@ -171,9 +171,6 @@
 						If multiple enemies or events share the same prices, one will be chosen at random from
 						that group.
 					</p>
-					<p>
-						Please notify the streamer if you notice anything wrong based on the information above.
-					</p>
 				</Accordion>
 			</div>
 		{/if}
