@@ -1,5 +1,4 @@
 <script lang="ts">
-	import './layout.css';
 	import favicon from '$lib/assets/favicon.png';
 	import '@fontsource-variable/teko';
 	import '@fontsource-variable/roboto';
