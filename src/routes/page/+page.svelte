@@ -55,13 +55,7 @@
 	}}
 />
 
-{#snippet supportBanner()}
-	<p>
-		This mod does not take a cut from the streamer. If you like this mod, please consider supporting
-		the developer CritHaxXoG on <a href="https://ko-fi.com/zehsteam" target="_blank">Ko-fi</a>
-		<Fa size="sm" icon={faHeart} />
-	</p>
-{/snippet}
+
 
 {#if pageQuery.isLoading}
 	<br />
@@ -77,7 +71,15 @@
 	<br />
 	<BrowsePagesButton />
 {:else if pageData}
-	<MessageBanner id="supportBanner" content={supportBanner} />
+    <MessageBanner id="supportBanner">
+        {#snippet content()}
+            <p>
+                This mod does not take a cut from the streamer. If you like this mod, please consider supporting
+                the developer CritHaxXoG on <a href="https://ko-fi.com/zehsteam" target="_blank">Ko-fi</a>
+                <Fa size="sm" icon={faHeart} />
+            </p>
+        {/snippet}
+    </MessageBanner>
 
 	<div class="page-data-container">
 		<PageInfo page={pageData} />

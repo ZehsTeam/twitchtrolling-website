@@ -22,7 +22,8 @@
 		image: '/icon.png',
 		url: 'https://twitchtrolling.com'
 	};
-
+    
+    // svelte-ignore state_referenced_locally
 	const seo: SEOData = {
 		...defaults,
 		...overrides

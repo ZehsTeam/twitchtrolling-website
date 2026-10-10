@@ -17,6 +17,8 @@
 	const closeDuration = 1000 * 60 * 60; // 60 minutes
 
 	// persisted timestamp (ISO) or null
+    // id is treated as constant for the lifetime of this component
+    // svelte-ignore state_referenced_locally
 	let closedAt = new PersistedState<string | null>(`${id}ClosedAt`, null);
 
 	// a ticking value so $derived can re-evaluate over time
