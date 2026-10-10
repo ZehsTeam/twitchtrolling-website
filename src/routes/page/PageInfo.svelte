@@ -5,6 +5,7 @@
 	import twitchImage from '$lib/assets/twitch-64x64.png';
 	import Partner from '$lib/components/icons/Partner.svelte';
 	import { formatFollowers } from '$lib/numbers';
+    import * as HoverCard from "$lib/components/ui/hover-card/index.js";
 
 	let {
 		page
@@ -64,8 +65,18 @@
 			{followersFormatted}
 			Followers
 		</p>
-		<p>Created {createdAgo}</p>
+        <p class="slash-separator">/</p>
+        <HoverCard.Root>
+            <HoverCard.Trigger>
+                <p>Created {createdAgo}</p>
+            </HoverCard.Trigger>
+            <HoverCard.Content>
+                <p>{page._creationTime}</p>
+            </HoverCard.Content>
+        </HoverCard.Root>
+        <p class="slash-separator">/</p>
 		<p>Updated {updatedAgo}</p>
+        <p class="slash-separator">/</p>
 		<p>Expires {expiresIn}</p>
 	</div>
 </div>
@@ -95,11 +106,10 @@
 		gap: 0.75em;
 	}
 
-	.other-info-container p:not(:last-child)::after {
-		content: '/';
-		margin-left: 0.75em;
-		color: var(--text-muted);
-	}
+    .slash-separator {
+        user-select: none;
+        color: var(--text-muted);
+    }
 
 	h1 {
 		font-size: 1.8rem;
@@ -136,8 +146,8 @@
 			flex-direction: column;
 		}
 
-		.other-info-container p:not(:last-child)::after {
-			display: none;
-		}
+        .slash-separator {
+            display: none;
+        }
 	}
 </style>
