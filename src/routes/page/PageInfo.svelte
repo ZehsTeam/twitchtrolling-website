@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte';
 	import type { Page } from '$lib/types';
-	import { formatDistanceToNow } from 'date-fns';
+	import { format, formatDistanceToNow } from 'date-fns';
 	import twitchImage from '$lib/assets/twitch-64x64.png';
 	import Partner from '$lib/components/icons/Partner.svelte';
 	import { formatFollowers } from '$lib/numbers';
     import * as HoverCard from "$lib/components/ui/hover-card/index.js";
-
+    
 	let {
 		page
 	}: {
@@ -40,6 +40,14 @@
 	let expiresIn = $derived(
 		now && page.expiresAt ? formatDistanceToNow(page.expiresAt, { addSuffix: true }) : 'never'
 	);
+
+    const getDateTime = (date: number | undefined): string => {
+        if (!date) {
+            return 'N/A';
+        }
+
+        return format(date, "d MMM yyyy, HH:mm:ss");
+    }
 </script>
 
 <div class="page-info">
@@ -61,25 +69,30 @@
 		{/if}
 	</div>
 	<div class="other-info-container">
-		<p>
-			{followersFormatted}
-			Followers
-		</p>
+        {#if followersFormatted === `${page.followerCount}`}
+            <p>{followersFormatted} Followers</p>
+        {:else}
+            {@render infoHoverCard(`${followersFormatted} Followers`, `${page.followerCount} Followers`)}
+        {/if}
         <p class="slash-separator">/</p>
-        <HoverCard.Root>
-            <HoverCard.Trigger>
-                <p>Created {createdAgo}</p>
-            </HoverCard.Trigger>
-            <HoverCard.Content>
-                <p>{page._creationTime}</p>
-            </HoverCard.Content>
-        </HoverCard.Root>
+        {@render infoHoverCard(`Created ${createdAgo}`, getDateTime(page._creationTime))}
         <p class="slash-separator">/</p>
-		<p>Updated {updatedAgo}</p>
+        {@render infoHoverCard(`Updated ${updatedAgo}`, getDateTime(page.updatedByOwnerAt))}
         <p class="slash-separator">/</p>
-		<p>Expires {expiresIn}</p>
+        {@render infoHoverCard(`Expires ${expiresIn}`, getDateTime(page.expiresAt))}
 	</div>
 </div>
+
+{#snippet infoHoverCard(text: string, hoverText: string)}
+    <HoverCard.Root openDelay={0} closeDelay={0}>
+        <HoverCard.Trigger>
+            <p class="info-hover-card-text">{text}</p>
+        </HoverCard.Trigger>
+        <HoverCard.Content>
+            <p>{hoverText}</p>
+        </HoverCard.Content>
+    </HoverCard.Root>
+{/snippet}
 
 <style>
 	.page-info {
@@ -109,6 +122,10 @@
     .slash-separator {
         user-select: none;
         color: var(--text-muted);
+    }
+
+    .info-hover-card-text {
+        text-decoration: none !important;
     }
 
 	h1 {
