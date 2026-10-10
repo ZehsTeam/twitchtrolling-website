@@ -4,7 +4,7 @@
 	import { formatDistanceToNow } from 'date-fns';
 	import twitchImage from '$lib/assets/twitch-64x64.png';
 	import Partner from '$lib/components/icons/Partner.svelte';
-	import { formatFollowers } from '$lib/utils';
+	import { formatFollowers } from '$lib/numbers';
 
 	let {
 		page

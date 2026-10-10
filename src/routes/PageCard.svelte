@@ -2,7 +2,7 @@
 	import { resolve } from '$app/paths';
 	import { onDestroy } from 'svelte';
 	import { formatDistanceToNow } from 'date-fns';
-	import { formatFollowers } from '$lib/utils';
+	import { formatFollowers } from '$lib/numbers';
 	import type { Page } from '$lib/types';
 	import twitchImage from '$lib/assets/twitch-64x64.png';
 	import Partner from '$lib/components/icons/Partner.svelte';
