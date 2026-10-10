@@ -136,13 +136,13 @@
 						Using subs to spawn enemies will multiply the enemy spawn count by the tier of the sub.
 					</p>
 					<p>
-						Tier 1 <Star yOffset="2px" /> or <Gift yOffset="2px" /> multiplies enemy spawn count by {pageData.tier1SubEnemyMultiplier}
+						Tier 1 <Star yOffset="2px" />or <Gift yOffset="2px" />multiplies enemy spawn count by {pageData.tier1SubEnemyMultiplier}
 					</p>
 					<p>
-						Tier 2 <Star yOffset="2px" /> or <Gift yOffset="2px" /> multiplies enemy spawn count by {pageData.tier2SubEnemyMultiplier}
+						Tier 2 <Star yOffset="2px" />or <Gift yOffset="2px" />multiplies enemy spawn count by {pageData.tier2SubEnemyMultiplier}
 					</p>
 					<p>
-						Tier 3 <Star yOffset="2px" /> or <Gift yOffset="2px" /> multiplies enemy spawn count by {pageData.tier3SubEnemyMultiplier}
+						Tier 3 <Star yOffset="2px" />or <Gift yOffset="2px" />multiplies enemy spawn count by {pageData.tier3SubEnemyMultiplier}
 					</p>
 				</Accordion>
 			</div>
