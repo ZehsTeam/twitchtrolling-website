@@ -8,8 +8,8 @@
 	--bg-light: hsl(0 0% 10%);
 	--text: hsl(0 0% 95%);
 	--text-muted: hsl(0 0% 70%);
-	--border: oklch(0.922 0 0);
-	--accent: oklch(0.97 0 0);
+	--border: hsl(0 0% 30%);    /* from shadcn-svelte  oklch(0.922 0 0); */
+	--accent: #9146ff;  /* from shadcn-svelte oklch(0.97 0 0); */
 	--accent-light: #a78bfa;
 	--accent-dark: #772ce8;
 	--border-radius: 3px;
@@ -46,7 +46,9 @@
 	--sidebar-ring: oklch(0.708 0 0);
 }
 
-* {
+*,
+::before,
+::after {
 	box-sizing: border-box;
 	margin: 0;
 	padding: 0;
