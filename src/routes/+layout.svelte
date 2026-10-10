@@ -1,8 +1,10 @@
 <script lang="ts">
 	import favicon from '$lib/assets/favicon.png';
+    import '@fontsource-variable/teko';
+    import '@fontsource-variable/roboto';
 	import '../app.css';
 	import Header from '$lib/components/Header.svelte';
-
+    
 	import { PUBLIC_CONVEX_URL } from '$env/static/public';
 	import { setupConvex } from 'convex-svelte';
 
